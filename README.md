@@ -9,7 +9,7 @@ Retrieve the real-time quote for symbol, which can be any instrument supported b
 Return: 1 quote.
 
 <b>yahoo_quotes(symbols)</b><br>
-Retrieve the real-time quotes of all symbols in the list. The retrieval is parallelized using threads to allow for an efficient execution.<br>
+Retrieve the real-time quotes of all symbols in the list. The retrieval is parallelized using threads to allow for an efficient execution (it takes about the same time to retrieve 1 quote or a list of quote).<br>
 Return: a list of quotes matching the symbols list.
 
 Each quote is an object:
