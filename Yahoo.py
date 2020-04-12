@@ -46,7 +46,7 @@ def yahoo_quotes(symbols):
     n = len(symbols)
     quotes = [None] * n
     with cf.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(yahoo_quote, TICKER[idx], idx) for idx in range(n)]
+        futures = [executor.submit(yahoo_quote, symbols[idx], idx) for idx in range(n)]
         for future in cf.as_completed(futures):
             quote, idx = future.result()
             quotes[idx] = quote
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     print('{} : {:.2f} ({:+.2f}, {:+.2f}%)'.format(symbol, quote.price, quote.net, quote.pct))
     
     # retrieve a list of quotes
-    symbols = ['^GSPC', 'EURUSD=X']
+    symbols = ['^GSPC', 'EURUSD=X', 'GC=F']
     quotes = yahoo_quotes(symbols)
     for symbol, quote in zip(symbols, quotes):
         print('{} : {:.2f} ({:+.2f}, {:+.2f}%)'.format(symbol, quote.price, quote.net, quote.pct))
