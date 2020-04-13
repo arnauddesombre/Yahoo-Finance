@@ -35,11 +35,11 @@ def yahoo_quote(symbol, idx=None):
     page = requests.get(url).text
     soup = BeautifulSoup(page, features='lxml')
     price = soup.find_all('span', attrs={'data-reactid': 14})[0].text
-    change = soup.find_all('span', attrs={'data-reactid': 16})[0].text
-    change = change.split(' ')
     price = locale.atof(price)
-    net = locale.atof(change[0])
-    pct = locale.atof(change[1][1:-2])
+    change = soup.find_all('span', attrs={'data-reactid': 16})[0].text
+    net, pct = change.split(' ')
+    net = locale.atof(net)
+    pct = locale.atof(pct[1:-2])
     if idx == None:
         return Quote(price, net, pct)
     else:
@@ -47,9 +47,9 @@ def yahoo_quote(symbol, idx=None):
 
 """ retrieve price / net change / pct change for a list of symbols """
 def yahoo_quotes(symbols):
-    # parallel retrieval of quotes
     n = len(symbols)
     quotes = [None] * n
+    # parallel retrieval of quotes
     with cf.ThreadPoolExecutor() as executor:
         futures = [executor.submit(yahoo_quote, symbols[idx], idx) for idx in range(n)]
         for future in cf.as_completed(futures):
@@ -60,20 +60,18 @@ def yahoo_quotes(symbols):
 
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 if __name__ == "__main__":
-    '''
-    # all available attributes
+    # print all available attributes
     symbol = 'IBM/?p=IBM'
     yahoo_attributes(symbol)
     print()
-    '''
 
-    # retrieve 1 quote
+    # retrieve and print 1 quote
     symbol = 'MSFT/?p=MSFT'
     quote = yahoo_quote(symbol)
     print('{} : {:.2f} ({:+.2f}, {:+.2f}%)'.format(symbol, quote.price, quote.net, quote.pct))
     print()
     
-    # retrieve a list of quotes
+    # retrieve and print a list of quotes
     symbols = ['^GSPC', 'EURUSD=X', 'GC=F']
     quotes = yahoo_quotes(symbols)
     for symbol, quote in zip(symbols, quotes):
