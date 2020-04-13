@@ -20,15 +20,20 @@ class Quote():
         self.net = net
         self.pct = pct
 
+""" helper function, find attributes available for a quote """
+def yahoo_attributes(symbol):
+    url = 'https://finance.yahoo.com/quote/' + symbol
+    page = requests.get(url).text
+    soup = BeautifulSoup(page, features='lxml')
+    spans = soup.find_all('span')
+    for span in spans:
+        print(span.attrs, span.text)
+
 """ retrieve price / net change / pct change for 1 symbol """
 def yahoo_quote(symbol, idx=None):
     url = 'https://finance.yahoo.com/quote/' + symbol
     page = requests.get(url).text
     soup = BeautifulSoup(page, features='lxml')
-    # to find all possible attributes, use:
-    #spans = soup.find_all('span')
-    #for span in spans:
-    #    print(span.attrs, span.text)
     price = soup.find_all('span', attrs={'data-reactid': 14})[0].text
     change = soup.find_all('span', attrs={'data-reactid': 16})[0].text
     change = change.split(' ')
@@ -55,10 +60,18 @@ def yahoo_quotes(symbols):
 
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 if __name__ == "__main__":
+    '''
+    # all available attributes
+    symbol = 'IBM/?p=IBM'
+    yahoo_attributes(symbol)
+    print()
+    '''
+
     # retrieve 1 quote
     symbol = 'MSFT/?p=MSFT'
     quote = yahoo_quote(symbol)
     print('{} : {:.2f} ({:+.2f}, {:+.2f}%)'.format(symbol, quote.price, quote.net, quote.pct))
+    print()
     
     # retrieve a list of quotes
     symbols = ['^GSPC', 'EURUSD=X', 'GC=F']
