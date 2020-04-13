@@ -25,4 +25,4 @@ volume = locale.atof(volume)
 ...
 return Quote(price, net, pct, volume)
 ```
-Be aware that not all attributes are available for all quotes.
+Be aware that not all attributes are available for all quotes. If you include the volume in your class Quote(), ```yahoo_quote('^GSPC')``` will throw an error as volume is not available for the S&P 500.
